@@ -1,6 +1,11 @@
-import { MessageCircleQuestion, Signpost, Users } from "lucide-react";
+import {
+  MessageCircleQuestion,
+  Signpost,
+  Users,
+  type LucideIcon,
+} from "lucide-react";
 
-const RULES = [
+const DEFAULT_RULES = [
   {
     icon: MessageCircleQuestion,
     title: "先问清楚",
@@ -18,15 +23,25 @@ const RULES = [
   },
 ];
 
-export function SideRail() {
+export function SideRail({
+  kicker = "咨询规矩",
+  heading = "大叔只认这三件事",
+  rules = DEFAULT_RULES,
+}: {
+  kicker?: string;
+  heading?: string;
+  rules?: Array<{
+    icon: LucideIcon;
+    title: string;
+    body: string;
+  }>;
+}) {
   return (
     <aside className="hidden w-72 shrink-0 flex-col border-r border-white/8 px-6 py-8 lg:flex">
-      <p className="text-[11px] tracking-[0.22em] text-gold">咨询规矩</p>
-      <p className="mt-3 font-display text-2xl leading-snug text-paper">
-        大叔只认这三件事
-      </p>
+      <p className="text-[11px] tracking-[0.22em] text-gold">{kicker}</p>
+      <p className="mt-3 font-display text-2xl leading-snug text-paper">{heading}</p>
       <ol className="mt-8 space-y-6">
-        {RULES.map((rule) => (
+        {rules.map((rule) => (
           <li key={rule.title} className="flex gap-3">
             <span className="mt-0.5 grid size-9 shrink-0 place-items-center rounded-full border border-gold/25 text-gold">
               <rule.icon className="size-4" strokeWidth={1.75} aria-hidden />

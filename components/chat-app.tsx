@@ -2,6 +2,7 @@
 
 import { ArrowUp, Flame, RotateCcw, Square } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import { ALL_PROMPTS, PRIMARY_PROMPTS, SECONDARY_PROMPTS } from "@/lib/prompts";
 import { MarkdownView } from "@/components/markdown-view";
 
@@ -13,7 +14,38 @@ type Message = {
   content: string;
 };
 
-export function ChatApp() {
+type ChatAppProps = {
+  persona?: "uncle" | "duan";
+  primaryPrompts?: readonly string[];
+  secondaryPrompts?: readonly string[];
+  emptyTitle?: ReactNode;
+  emptyHint?: string;
+  placeholder?: string;
+  footnote?: ReactNode;
+};
+
+export function ChatApp({
+  persona = "uncle",
+  primaryPrompts = PRIMARY_PROMPTS,
+  secondaryPrompts = SECONDARY_PROMPTS,
+  emptyTitle = (
+    <>
+      分数和省份没说清，
+      <br />
+      我不会帮你填志愿。
+    </>
+  ),
+  emptyHint = "点一个问题，或者把位次、选科、家里有没有行业资源直接发过来。",
+  placeholder = "说说分数、省份、选科，或者你卡在哪",
+  footnote = (
+    <>
+      <span className="hidden sm:inline">Enter 发送，Shift+Enter 换行 · </span>
+      仅供参考，录取以省考试院当年公布为准
+    </>
+  ),
+}: ChatAppProps = {}) {
+  const allPrompts =
+    persona === "uncle" ? ALL_PROMPTS : [...primaryPrompts, ...secondaryPrompts];
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [streamingId, setStreamingId] = useState<string | null>(null);
@@ -132,7 +164,7 @@ export function ChatApp() {
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: history }),
+        body: JSON.stringify({ messages: history, persona }),
         signal: controller.signal,
       });
       if (!response.ok || !response.body) {
@@ -218,15 +250,11 @@ export function ChatApp() {
         ) : (
           <div className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center py-6">
             <p className="font-display text-[1.7rem] leading-snug text-paper md:text-4xl">
-              分数和省份没说清，
-              <br />
-              我不会帮你填志愿。
+              {emptyTitle}
             </p>
-            <p className="mt-3 max-w-md text-sm leading-6 text-mist">
-              点一个问题，或者把位次、选科、家里有没有行业资源直接发过来。
-            </p>
+            <p className="mt-3 max-w-md text-sm leading-6 text-mist">{emptyHint}</p>
             <div className="mt-7 grid gap-3 sm:grid-cols-2">
-              {PRIMARY_PROMPTS.map((prompt) => (
+              {primaryPrompts.map((prompt) => (
                 <button
                   key={prompt}
                   type="button"
@@ -241,7 +269,7 @@ export function ChatApp() {
               ))}
             </div>
             <div className="mt-3 flex flex-wrap gap-2">
-              {SECONDARY_PROMPTS.map((prompt) => (
+              {secondaryPrompts.map((prompt) => (
                 <button
                   key={prompt}
                   type="button"
@@ -260,7 +288,7 @@ export function ChatApp() {
         <div className="mx-auto w-full max-w-2xl">
           {hasMessages ? (
             <div className="chat-scroll mb-2 flex gap-2 overflow-x-auto pb-1">
-              {ALL_PROMPTS.map((prompt) => (
+              {allPrompts.map((prompt) => (
                 <button
                   key={prompt}
                   type="button"
@@ -296,7 +324,7 @@ export function ChatApp() {
               ref={textareaRef}
               rows={1}
               value={input}
-              placeholder="说说分数、省份、选科，或者你卡在哪"
+              placeholder={placeholder}
               className="max-h-32 min-h-10 flex-1 resize-none bg-transparent py-2 text-sm leading-6 text-paper outline-none placeholder:text-mist/80"
               onChange={(event) => setInput(event.target.value)}
               onCompositionStart={() => {
@@ -332,10 +360,7 @@ export function ChatApp() {
               </button>
             )}
           </form>
-          <p className="mt-2 text-center text-[11px] leading-5 text-mist">
-            <span className="hidden sm:inline">Enter 发送，Shift+Enter 换行 · </span>
-            仅供参考，录取以省考试院当年公布为准
-          </p>
+          <p className="mt-2 text-center text-[11px] leading-5 text-mist">{footnote}</p>
         </div>
       </div>
     </section>

@@ -5,6 +5,11 @@ export const metadata: Metadata = {
   title: "AI毒舌大叔 · 聊志愿",
   description:
     "不废话，说真话。把分数、省份和家里的资源说清楚，再听一个明确判断。",
+  verification: {
+    other: {
+      "baidu-site-verification": "codeva-X2w23PxQYN",
+    },
+  },
 };
 
 export const viewport: Viewport = {

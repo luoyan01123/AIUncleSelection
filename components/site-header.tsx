@@ -1,6 +1,16 @@
 import { Flame } from "lucide-react";
 
-export function SiteHeader() {
+export function SiteHeader({
+  badge = "聊志愿",
+  subtitle = "不废话，说真话 · 先问清楚再下判断",
+  switchHref,
+  switchLabel,
+}: {
+  badge?: string;
+  subtitle?: string;
+  switchHref?: string;
+  switchLabel?: string;
+}) {
   return (
     <header className="relative z-20 border-b border-gold/15 bg-ink/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4 md:h-[4.5rem] md:px-6">
@@ -13,13 +23,19 @@ export function SiteHeader() {
               AI毒舌大叔
             </h1>
             <span className="shrink-0 rounded-sm bg-cinnabar px-1.5 py-0.5 text-[10px] font-medium tracking-[0.22em] text-white">
-              聊志愿
+              {badge}
             </span>
           </div>
-          <p className="truncate text-xs text-mist">
-            不废话，说真话 · 先问清楚再下判断
-          </p>
+          <p className="truncate text-xs text-mist">{subtitle}</p>
         </div>
+        {switchHref && switchLabel ? (
+          <a
+            href={switchHref}
+            className="shrink-0 rounded-full border border-white/10 px-2.5 py-1 text-xs text-mist transition hover:border-gold/40 hover:text-paper"
+          >
+            {switchLabel}
+          </a>
+        ) : null}
         <div className="flex shrink-0 items-center gap-2 rounded-full border border-white/10 px-2.5 py-1 text-xs text-mist">
           <span className="relative flex size-2" aria-hidden>
             <span className="absolute inline-flex size-full rounded-full bg-emerald-400 opacity-60 motion-safe:animate-ping" />
